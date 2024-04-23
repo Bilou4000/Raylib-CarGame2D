@@ -6,11 +6,17 @@
 class Tile
 {
 public:
-	float mPosX = 10;
-	float mPosY = 10;
+	Tile(TilesType type);
+
+	void GetColor();
+	void GetSpeed();
+
+	float mX = 10;
+	float mY = 10;
 	TilesType mType = GRASS;
 
 private:
 	Color mColor = LIME;
+	float mSpeedMultiplier = 0.5f;
 };
 

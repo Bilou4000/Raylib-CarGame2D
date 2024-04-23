@@ -3,16 +3,19 @@
 class Car
 {
 public:
-	void Update();
+	void Update(float deltaTime);
 	void Draw();
 
 private:
-	float mPosX = 10;
-	float mPosY = 10;
+	float mX = 640;
+	float mY = 360;
+	float mAngle = 0;
 
-	float mWidth = 10;
-	float mHeight = 5;
+	float mWidth = 80;
+	float mHeight = 40;
 
-	float mVelocitySpeed = 5;
+	float mVelocity = 200;
+	float mSpeed = 0;
+	float mMaxSpeed = 400;
 };
 
