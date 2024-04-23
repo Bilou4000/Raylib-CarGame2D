@@ -20,7 +20,11 @@ private:
 
 	float mVelocity = 200;
 	float mSpeed = 0;
-	float mMaxSpeed = 400;
+	float mAccelerationSpeed = 5.0f;
+	float mDeccelerationSpeed = 3.0f;
+	float mMaxSpeed = 400.0f;
+
+	float mCurrentSpeedMultiplier = 0.0f;
 
 	Environment& mEnvironment;
 };

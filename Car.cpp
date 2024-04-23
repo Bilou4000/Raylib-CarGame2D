@@ -1,10 +1,12 @@
 #include "Car.h"
 
 #include "raylib.h"
+#include "raymath.h"
 #include <iostream>
 #include <cmath>
 
 bool playerIsMoving = false;
+
 
 Car::Car( Environment& environment )
 	: mEnvironment( environment )
@@ -13,47 +15,34 @@ Car::Car( Environment& environment )
 
 void Car::Update(float deltaTime)
 {
+	float targetSpeed = 0.0f;
+	float accelerationSpeed = mAccelerationSpeed;
 	if (IsKeyDown(KEY_W))
 	{
 		playerIsMoving = true;
-
-		if (mSpeed < mMaxSpeed)
-		{
-			mSpeed += 10;
-		}
+		targetSpeed = mMaxSpeed;
 	}
 	else if (IsKeyDown(KEY_S))
 	{
 		playerIsMoving = true;
-
-		if (mSpeed > -mMaxSpeed)
-		{
-			mSpeed -= 10;
-		}
+		targetSpeed = -mMaxSpeed;
 	}
 	else
 	{
 		playerIsMoving = false; 
-
-		if(mSpeed > 0)
-		{
-			mSpeed -= 20;
-		}
-		else if (mSpeed < 0)
-		{
-			mSpeed += 20;
-		}
-
+		accelerationSpeed = mDeccelerationSpeed;
 	}
+
+	mSpeed = Lerp(mSpeed, targetSpeed, deltaTime * accelerationSpeed);
 
 	if (IsKeyDown(KEY_D) && playerIsMoving)
 	{
-		mAngle += mVelocity * ( PI / 180.0f ) * deltaTime;
+		mAngle += mVelocity * DEG2RAD * deltaTime;
 	}
 
 	if (IsKeyDown(KEY_A)&& playerIsMoving)
 	{
-		mAngle -= mVelocity * ( PI / 180.0f ) * deltaTime;
+		mAngle -= mVelocity * DEG2RAD * deltaTime;
 	}
 
 	int tilePosX = floorf((mX / mEnvironment.mTileSize));
@@ -67,10 +56,13 @@ void Car::Update(float deltaTime)
 	{
 		speedMultiplier = tiledata->mSpeedMultiplier;
 	}
+
+	mCurrentSpeedMultiplier = Lerp( mCurrentSpeedMultiplier, speedMultiplier, deltaTime * 10.0f );
+	//printf( "%f\n", mCurrentSpeedMultiplier );
 	//float speedMultiplier = tiledata != nullptr ? tiledata->mSpeedMultiplier : 1.0f;
 
-	float x = mX + cos(mAngle) * ( mSpeed * speedMultiplier * deltaTime );
-	float y = mY + sin(mAngle) * ( mSpeed * speedMultiplier * deltaTime );
+	float x = mX + cos(mAngle) * ( mSpeed * mCurrentSpeedMultiplier * deltaTime );
+	float y = mY + sin(mAngle) * ( mSpeed * mCurrentSpeedMultiplier * deltaTime );
 
 	mX = x;
 	mY = y;
