@@ -6,6 +6,11 @@
 
 bool playerIsMoving = false;
 
+Car::Car( Environment& environment )
+	: mEnvironment( environment )
+{
+}
+
 void Car::Update(float deltaTime)
 {
 	if (IsKeyDown(KEY_W))

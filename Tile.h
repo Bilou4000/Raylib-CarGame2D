@@ -1,25 +1,15 @@
 #pragma once
 
-#include "TilesType.h"
 #include "raylib.h"
 
-class Tile
+enum class TilesType
 {
-public:
-	Tile(TilesType type);
-	Tile(float X, float Y, float size, TilesType type);
+	GRASS,
+	ROAD,
+};
 
-	void Draw();
-
-	void UpdateColor();
-	void UpdateSpeed();
-
-	float mX = 10;
-	float mY = 10;
-	float mSize = 20;
-	TilesType mType = TilesType::GRASS;
-
-private:
+struct TileData
+{
 	Color mColor = LIME;
 	float mSpeedMultiplier = 0.5f;
 };

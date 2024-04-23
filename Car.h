@@ -1,8 +1,12 @@
 #pragma once
 
+#include "Environment.h"
+
 class Car
 {
 public:
+	Car(Environment& environment);
+
 	void Update(float deltaTime);
 	void Draw();
 
@@ -17,5 +21,7 @@ private:
 	float mVelocity = 200;
 	float mSpeed = 0;
 	float mMaxSpeed = 400;
+
+	Environment& mEnvironment;
 };
 
