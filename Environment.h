@@ -9,7 +9,7 @@ public:
 
 	void Draw();
 
-	const TileData& GetTileDataAtPos(int x, int y) const; 
+	const TileData* GetTileDataAtPos(int x, int y) const; 
 
 	const float mTileSize = 80.0f;
 

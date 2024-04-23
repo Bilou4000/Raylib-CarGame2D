@@ -15,21 +15,26 @@ void Environment::Draw()
 	{
 		for (int x = 0; x < mTilesX; x++)
 		{
-			const TileData& theTile = GetTileDataAtPos(x, y);
-			DrawRectangle(x * mTileSize, y * mTileSize, mTileSize, mTileSize, theTile.mColor);
+			const TileData* theTile = GetTileDataAtPos(x, y);
+			DrawRectangle(x * mTileSize, y * mTileSize, mTileSize, mTileSize, theTile->mColor);
 		}
 	}
 }
 
-const TileData& Environment::GetTileDataAtPos( int x, int y ) const
+const TileData* Environment::GetTileDataAtPos( int x, int y ) const
 {
+	if(x >= mTilesX || x < 0 || y >= mTilesY || y < 0)
+	{
+		return nullptr;
+	}
+
 	switch ( (TilesType)mTiles[y][x] )
 	{
 		case TilesType::GRASS:
-			return mTileGrass;
+			return &mTileGrass;
 		case TilesType::ROAD:
-			return mTileRoad;
-		default:
-			break;
+			return &mTileRoad;
 	}
+
+	return nullptr;
 }
