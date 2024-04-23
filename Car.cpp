@@ -56,8 +56,14 @@ void Car::Update(float deltaTime)
 		mAngle -= mVelocity * ( PI / 180.0f ) * deltaTime;
 	}
 
-	float x = mX + cos(mAngle) * ( mSpeed * deltaTime );
-	float y = mY + sin(mAngle) * ( mSpeed * deltaTime );
+	int tilePosX = floorf((mX / mEnvironment.mTileSize));
+	int tilePosY = floorf((mY / mEnvironment.mTileSize));
+	//printf( "%d %d\n", tilePosX, tilePosY);
+
+	float speedMultiplier = mEnvironment.GetTileDataAtPos(tilePosX,tilePosY).mSpeedMultiplier;
+
+	float x = mX + cos(mAngle) * ( mSpeed * speedMultiplier * deltaTime );
+	float y = mY + sin(mAngle) * ( mSpeed * speedMultiplier * deltaTime );
 
 	mX = x;
 	mY = y;

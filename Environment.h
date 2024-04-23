@@ -11,11 +11,11 @@ public:
 
 	const TileData& GetTileDataAtPos(int x, int y) const; 
 
+	const float mTileSize = 80.0f;
+
 private:
 	static const int mTilesX = 16;
 	static const int mTilesY = 10;
-
-	const float mTileSize = 80.0f;
 
 	int mTiles[mTilesY][mTilesX]
 	{
