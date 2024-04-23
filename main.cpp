@@ -3,20 +3,51 @@
 
 using namespace std;
 
+//Variable
+int screenWidth = 1280;
+int screenHeight = 720;
+
+//Function
+void Load();
+void Update();
+void Draw();
+void Unload();
+
+
 int main() {
 
-    
-    cout << "Hello World" << endl;
+    Load();
 
-    InitWindow(300, 300, "My first Raylib window!");
-    SetTargetFPS(60);
-
-    while (!WindowShouldClose()) {
-        BeginDrawing();
-        ClearBackground(DARKGREEN);
-        EndDrawing();
+    while (!WindowShouldClose())
+    {
+        Update();
+        Draw();
     }
 
-    CloseWindow();
+    Unload();
     return 0;
+}
+
+
+void Load()
+{
+    InitWindow(screenWidth, screenHeight, "TouhouEngine");
+    SetTargetFPS(60);
+}
+
+void Update()
+{
+    float deltaTime = GetFrameTime();
+}
+
+void Draw()
+{
+    BeginDrawing();
+    ClearBackground({ GRAY });
+    EndDrawing();
+}
+
+void Unload()
+{
+    CloseWindow();
 }
