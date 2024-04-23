@@ -28,25 +28,25 @@ void Tile::Draw()
 	//}
 }
 
-void Tile::GetColor()
+void Tile::UpdateColor()
 {
-	if (mType == GRASS)
+	if (mType == TilesType::GRASS)
 	{
 		mColor = LIME;
 	}
-	else if (mType == ROAD)
+	else if (mType == TilesType::ROAD)
 	{
 		mColor = DARKGRAY;
 	}
 }
 
-void Tile::GetSpeed()
+void Tile::UpdateSpeed()
 {
-	if (mType == GRASS)
+	if (mType == TilesType::GRASS)
 	{
 		mSpeedMultiplier = 0.5f;
 	}
-	else if (mType == ROAD)
+	else if (mType == TilesType::ROAD)
 	{
 		mSpeedMultiplier = 1.0f;
 	}

@@ -11,13 +11,13 @@ public:
 
 	void Draw();
 
-	void GetColor();
-	void GetSpeed();
+	void UpdateColor();
+	void UpdateSpeed();
 
 	float mX = 10;
 	float mY = 10;
 	float mSize = 20;
-	TilesType mType = GRASS;
+	TilesType mType = TilesType::GRASS;
 
 private:
 	Color mColor = LIME;

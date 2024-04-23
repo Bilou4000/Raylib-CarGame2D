@@ -70,7 +70,7 @@ void DrawBackground()
     {
         for (int y = 0; y < 10; y++)
         {
-            grass[x][y] = new Tile(( x * 80 ), ( y * 80 ), 80, GRASS);
+            grass[x][y] = new Tile(( x * 80 ), ( y * 80 ), 80, TilesType::GRASS);
             grass[x][y]->Draw();
         }
     }
@@ -80,7 +80,8 @@ void DrawBackground()
     //for (int x = 2; x < 13; x++)
     //{
     //    road1 = new Tile(( x * 80 ), 40, 80, ROAD);
-    //    road1->GetColor();
+    //    road1->UpdateColor();
+    //    road1->UpdateSpeed();
     //    road1->Draw();
     //    //for (int y = 0; y < 2; y++)
     //    //{
