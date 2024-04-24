@@ -1,9 +1,7 @@
 #include "raylib.h"
 #include <iostream>
 
-#include "Car.h"
-#include "Tile.h"
-#include "Environment.h"
+#include "GameManager.h";
 
 using namespace std;
 
@@ -11,16 +9,13 @@ using namespace std;
 int screenWidth = 1280;
 int screenHeight = 720;
 
-Environment environment;
-Car car( environment );
+GameManager gameManager;
 
 //Function
 void Load();
 void Update();
 void Draw();
 void Unload();
-
-void DrawBackground();
 
 
 int main() {
@@ -43,12 +38,14 @@ void Load()
     InitWindow(screenWidth, screenHeight, "Racing Car");
     SetTargetFPS(60);
 
+    gameManager.Init();
 }
 
 void Update()
 {
     float deltaTime = GetFrameTime();
-    car.Update(deltaTime);
+    
+    gameManager.Update(deltaTime);
 }
 
 void Draw()
@@ -56,16 +53,9 @@ void Draw()
     BeginDrawing();
     ClearBackground({ GRAY });
 
-    DrawBackground();
-
-    car.Draw();
+    gameManager.Draw();
 
     EndDrawing();
-}
-
-void DrawBackground()
-{
-    environment.Draw();
 }
 
 void Unload()

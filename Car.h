@@ -10,9 +10,9 @@ public:
 	void Update(float deltaTime);
 	void Draw();
 
-private:
 	float mX = 640;
 	float mY = 360;
+private:
 	float mAngle = 0;
 
 	float mWidth = 60;
