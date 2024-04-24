@@ -9,7 +9,7 @@ Environment::Environment()
 	mTileRoad.mSpeedMultiplier = 1.0f;
 
 	mTileObstacle.mColor = DARKGREEN;
-	//mTileObstacle.mSpeedMultiplier = 0.0f;
+	mTileObstacle.mIsObstacle = true;
 }
 
 void Environment::Draw()

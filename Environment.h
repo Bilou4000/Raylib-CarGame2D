@@ -13,9 +13,10 @@ public:
 
 	const float mTileSize = 50.0f;
 
+    static const int mTilesX = 26;
+    static const int mTilesY = 15;
+
 private:
-	static const int mTilesX = 26;
-	static const int mTilesY = 15;
 
 	int mTiles[mTilesY][mTilesX]
 	{
