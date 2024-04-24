@@ -15,8 +15,8 @@ private:
 	float mY = 360;
 	float mAngle = 0;
 
-	float mWidth = 80;
-	float mHeight = 40;
+	float mWidth = 60;
+	float mHeight = 30;
 
 	float mVelocity = 200;
 	float mSpeed = 0;
