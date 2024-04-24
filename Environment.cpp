@@ -7,6 +7,9 @@ Environment::Environment()
 
 	mTileRoad.mColor = DARKGRAY;
 	mTileRoad.mSpeedMultiplier = 1.0f;
+
+	mTileObstacle.mColor = DARKGREEN;
+	//mTileObstacle.mSpeedMultiplier = 0.0f;
 }
 
 void Environment::Draw()
@@ -34,6 +37,8 @@ const TileData* Environment::GetTileDataAtPos( int x, int y ) const
 			return &mTileGrass;
 		case TilesType::ROAD:
 			return &mTileRoad;
+		case TilesType::OBSTACLE:
+			return &mTileObstacle;
 	}
 
 	return nullptr;

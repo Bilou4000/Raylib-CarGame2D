@@ -6,6 +6,7 @@ enum class TilesType
 {
 	GRASS,
 	ROAD,
+	OBSTACLE,
 };
 
 struct TileData
