@@ -15,6 +15,7 @@ Car::Car( Environment& environment )
 
 void Car::Update(float deltaTime)
 {
+	//Move
 	float targetSpeed = 0.0f;
 	float accelerationSpeed = mAccelerationSpeed;
 	if (IsKeyDown(KEY_W))
@@ -66,6 +67,24 @@ void Car::Update(float deltaTime)
 
 	mX = x;
 	mY = y;
+
+	//Collision on wall
+	if (mY < 0)
+	{
+		mY = 0;
+	}
+	if (mX < 0)
+	{
+		mX = 0;
+	}
+	if (mX > GetScreenWidth()) // + width of car
+	{
+		mX = GetScreenWidth(); //- ballRec.width;
+	}
+	if (mY > GetScreenHeight()) // + width of car
+	{
+		mY = GetScreenHeight(); //- ballRec.width;
+	}
 
 }
 
