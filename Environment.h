@@ -6,6 +6,7 @@
 struct Checkpoint
 {
     bool mIsPassed = false;
+    bool mIsFinishLine = false;
     Rectangle mArea {};
 };
 
@@ -16,6 +17,8 @@ public:
 
     void InitCheckpoints();
 	void Draw();
+
+    bool CanPassFinishLine();
 
     Checkpoint* GetCheckpointAtPos(int tileX, int tileY);
 	const TileData* GetTileDataAtPos(int tileX, int tileY) const;

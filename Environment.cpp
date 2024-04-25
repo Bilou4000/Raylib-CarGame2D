@@ -59,6 +59,11 @@ void Environment::InitCheckpoints()
 					Checkpoint newCheckpoint {};
 					newCheckpoint.mArea = { x * mTileSize, y * mTileSize, mTileSize, mTileSize };
 
+					if (mTiles[y][x] == finishLineTileID)
+					{
+						newCheckpoint.mIsFinishLine = true;
+					}
+
 					mAllCheckpoints.push_back(newCheckpoint);
 				}
 			}
@@ -82,6 +87,19 @@ void Environment::Draw()
 	{
 		DrawRectangleLinesEx(checkpoint.mArea, 2.0f, checkpoint.mIsPassed ? GREEN : BLUE);
 	}
+}
+
+bool Environment::CanPassFinishLine()
+{
+	for (Checkpoint& checkpoint : mAllCheckpoints)
+	{
+		if (!checkpoint.mIsFinishLine && !checkpoint.mIsPassed)
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 Checkpoint* Environment::GetCheckpointAtPos(int tileX, int tileY)

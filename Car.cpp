@@ -94,8 +94,15 @@ void Car::Update(float deltaTime)
 					}
 					else if (tiledata->mTileType == TilesType::CHECKPOINT || tiledata->mTileType == TilesType::FINISHLINE)
 					{
+						bool canPass = true;
+
 						Checkpoint* checkpoint = mEnvironment.GetCheckpointAtPos(tilePosX, tilePosY);
-						if (!checkpoint->mIsPassed && CheckCollisionWith(mX, mY, checkpoint->mArea))
+						if (checkpoint->mIsFinishLine)
+						{
+							canPass = mEnvironment.CanPassFinishLine();
+						}
+
+						if (canPass && !checkpoint->mIsPassed && CheckCollisionWith(mX, mY, checkpoint->mArea))
 						{
 							checkpoint->mIsPassed = true;
 						}
