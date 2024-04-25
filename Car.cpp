@@ -5,9 +5,6 @@
 #include <iostream>
 #include <cmath>
 
-bool playerIsMoving = false;
-
-
 Car::Car( Environment& environment )
 	: mEnvironment( environment )
 {
@@ -20,30 +17,27 @@ void Car::Update(float deltaTime)
 	float accelerationSpeed = mAccelerationSpeed;
 	if (IsKeyDown(KEY_W))
 	{
-		playerIsMoving = true;
 		targetSpeed = mMaxSpeed;
 	}
 	else if (IsKeyDown(KEY_S))
 	{
-		playerIsMoving = true;
 		targetSpeed = -mMaxSpeed;
 	}
 	else
 	{
-		playerIsMoving = false; 
 		accelerationSpeed = mDeccelerationSpeed;
 	}
 
 	mSpeed = Lerp(mSpeed, targetSpeed, deltaTime * accelerationSpeed);
 
-	if (IsKeyDown(KEY_D) && playerIsMoving)
+	if (IsKeyDown(KEY_D))
 	{
-		mAngle += mVelocity * DEG2RAD * deltaTime;
+		mAngle += mSpeed / mMaxSpeed * mVelocity * DEG2RAD * deltaTime;
 	}
 
-	if (IsKeyDown(KEY_A)&& playerIsMoving)
+	if (IsKeyDown(KEY_A))
 	{
-		mAngle -= mVelocity * DEG2RAD * deltaTime;
+		mAngle -= mSpeed / mMaxSpeed * mVelocity * DEG2RAD * deltaTime;
 	}
 
 
@@ -68,6 +62,9 @@ void Car::Update(float deltaTime)
 	float y = mY + sin(mAngle) * (mSpeed * mCurrentSpeedMultiplier * deltaTime);
 
 	//car collide ?
+	Vector2 hitboxForwardPos = GetHitboxPos(x, y, 0);
+	Vector2 hitboxBackwardPos = GetHitboxPos(x, y, 1);
+
 	bool hasCollided = false;
 	for (int offsetRow = -1; offsetRow <= 1; offsetRow++)
 	{
@@ -87,7 +84,8 @@ void Car::Update(float deltaTime)
 					Rectangle tile { tilePosX * mEnvironment.mTileSize, tilePosY * mEnvironment.mTileSize,
 						mEnvironment.mTileSize, mEnvironment.mTileSize };
 
-					if (CheckCollisionCircleRec({ x, y }, mHeight / 2, tile))
+
+					if (CheckCollisionCircleRec(hitboxForwardPos, mHitboxRadius, tile) || CheckCollisionCircleRec(hitboxBackwardPos, mHitboxRadius, tile))
 					{
 						x = mX;
 						y = mY;
@@ -134,7 +132,11 @@ void Car::Draw()
 
 	DrawRectanglePro(rec, origin, mAngle * RAD2DEG, WHITE);
 
-	DrawCircleLines(mX, mY, mHeight / 2, RED);
+	Vector2 hitboxForwardPos = GetHitboxPos(mX, mY, 0);
+	Vector2 hitboxBackwardPos = GetHitboxPos(mX, mY, 1);
+
+	DrawCircleLines(hitboxForwardPos.x, hitboxForwardPos.y, mHitboxRadius, RED);
+	DrawCircleLines(hitboxBackwardPos.x, hitboxBackwardPos.y, mHitboxRadius, RED);
 
 	//DEBUG
 	int carRow = floorf(mY / mEnvironment.mTileSize);
@@ -162,4 +164,18 @@ void Car::Draw()
 			}
 		}
 	}
+}
+
+Vector2 Car::GetHitboxPos(float carPosX, float carPosY, int hitboxIndex)
+{
+	if (hitboxIndex == 0)
+	{
+		return { carPosX, carPosY };
+	}
+	else if (hitboxIndex == 1)
+	{
+		return { carPosX + cos(mAngle) * (-mHitboxRadius * 2), carPosY + sin(mAngle) * (-mHitboxRadius * 2)};
+	}
+
+	return { carPosX, carPosY };
 }

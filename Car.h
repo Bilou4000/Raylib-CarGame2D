@@ -10,20 +10,22 @@ public:
 	void Update(float deltaTime);
 	void Draw();
 
+	Vector2 GetHitboxPos(float carPosX, float carPosY, int hitboxIndex);
+
 	float mX = 640;
 	float mY = 360;
 private:
+	const float mWidth = 60;
+	const float mHeight = 30;
+	const float mHitboxRadius = mHeight / 2;
+
+	const float mVelocity = 200;
+	const float mAccelerationSpeed = 5.0f;
+	const float mDeccelerationSpeed = 3.0f;
+	const float mMaxSpeed = 400.0f;
+
 	float mAngle = 0;
-
-	float mWidth = 60;
-	float mHeight = 30;
-
-	float mVelocity = 200;
 	float mSpeed = 0;
-	float mAccelerationSpeed = 5.0f;
-	float mDeccelerationSpeed = 3.0f;
-	float mMaxSpeed = 400.0f;
-
 	float mCurrentSpeedMultiplier = 0.0f;
 
 	Environment& mEnvironment;
