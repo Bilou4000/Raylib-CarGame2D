@@ -62,9 +62,6 @@ void Car::Update(float deltaTime)
 	float y = mY + sin(mAngle) * (mSpeed * mCurrentSpeedMultiplier * deltaTime);
 
 	//car collide ?
-	Vector2 hitboxForwardPos = GetHitboxPos(x, y, 0);
-	Vector2 hitboxBackwardPos = GetHitboxPos(x, y, 1);
-
 	bool hasCollided = false;
 	for (int offsetRow = -1; offsetRow <= 1; offsetRow++)
 	{
@@ -79,19 +76,30 @@ void Car::Update(float deltaTime)
 			{
 				const TileData* tiledata = mEnvironment.GetTileDataAtPos(tilePosX, tilePosY);
 
-				if (tiledata != nullptr && tiledata->mIsObstacle)
+				if (tiledata != nullptr)
 				{
-					Rectangle tile { tilePosX * mEnvironment.mTileSize, tilePosY * mEnvironment.mTileSize,
-						mEnvironment.mTileSize, mEnvironment.mTileSize };
-
-
-					if (CheckCollisionCircleRec(hitboxForwardPos, mHitboxRadius, tile) || CheckCollisionCircleRec(hitboxBackwardPos, mHitboxRadius, tile))
+					if (tiledata->mIsObstacle)
 					{
-						x = mX;
-						y = mY;
-						mSpeed = 0;
-						hasCollided = true;
-						break;
+						Rectangle tile { tilePosX * mEnvironment.mTileSize, tilePosY * mEnvironment.mTileSize,
+							mEnvironment.mTileSize, mEnvironment.mTileSize };
+
+						if (CheckCollisionWith(x, y, tile))
+						{
+							x = mX;
+							y = mY;
+							mSpeed = 0;
+							hasCollided = true;
+							break;
+						}
+					}
+					else if (tiledata->mTileType == TilesType::CHECKPOINT || tiledata->mTileType == TilesType::FINISHLINE)
+					{
+						Checkpoint* checkpoint = mEnvironment.GetCheckpointAtPos(tilePosX, tilePosY);
+						if (!checkpoint->mIsPassed && CheckCollisionWith(mX, mY, checkpoint->mArea))
+						{
+							checkpoint->mIsPassed = true;
+						}
+						
 					}
 				}
 			}
@@ -164,6 +172,14 @@ void Car::Draw()
 			}
 		}
 	}
+}
+
+bool Car::CheckCollisionWith(float carPosX, float carPosY, const Rectangle& bounds)
+{
+	Vector2 hitboxForwardPos = GetHitboxPos(carPosX, carPosY, 0);
+	Vector2 hitboxBackwardPos = GetHitboxPos(carPosX, carPosY, 1);
+
+	return CheckCollisionCircleRec(hitboxForwardPos, mHitboxRadius, bounds) || CheckCollisionCircleRec(hitboxBackwardPos, mHitboxRadius, bounds);
 }
 
 Vector2 Car::GetHitboxPos(float carPosX, float carPosY, int hitboxIndex)

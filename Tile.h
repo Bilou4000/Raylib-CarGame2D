@@ -15,6 +15,7 @@ enum class TilesType
 
 struct TileData
 {
+	TilesType mTileType = TilesType::GRASS;
 	Color mColor = LIME;
 	float mSpeedMultiplier = 0.5f;
 	bool mIsObstacle = false;

@@ -21,6 +21,49 @@ Environment::Environment()
 	TileData& tileFinishLine = mTilesData[(int) TilesType::FINISHLINE];
 	tileFinishLine.mColor = WHITE;
 	tileFinishLine.mSpeedMultiplier = tileRoad.mSpeedMultiplier;
+
+	for (int i = 0; i < (int) TilesType::MAX_COUNT; i++)
+	{
+		TileData& tileData = mTilesData[i];
+		tileData.mTileType = (TilesType) i;
+	}
+
+	InitCheckpoints();
+}
+
+void Environment::InitCheckpoints()
+{
+	mAllCheckpoints.clear();
+
+	const int checkpointTileID = (int) TilesType::CHECKPOINT;
+	const int finishLineTileID = (int) TilesType::FINISHLINE;
+
+	for (int y = 0; y < mTilesY; y++)
+	{
+		for (int x = 0; x < mTilesX; x++)
+		{
+			if (mTiles[y][x] == checkpointTileID || mTiles[y][x] == finishLineTileID)
+			{
+				if (y - 1 >= 0 && (mTiles[y - 1][x] == checkpointTileID || mTiles[y-1][x] == finishLineTileID))
+				{ 
+					Checkpoint* checkpoint = GetCheckpointAtPos(x, y - 1);
+					checkpoint->mArea.height += mTileSize;
+				}
+				else if (x - 1 >= 0 && (mTiles[y][x - 1] == checkpointTileID || mTiles[y][x - 1] == finishLineTileID))
+				{
+					Checkpoint* checkpoint = GetCheckpointAtPos(x - 1, y);
+					checkpoint->mArea.width += mTileSize;
+				}
+				else
+				{
+					Checkpoint newCheckpoint {};
+					newCheckpoint.mArea = { x * mTileSize, y * mTileSize, mTileSize, mTileSize };
+
+					mAllCheckpoints.push_back(newCheckpoint);
+				}
+			}
+		}
+	}
 }
 
 void Environment::Draw()
@@ -33,14 +76,39 @@ void Environment::Draw()
 			DrawRectangle(x * mTileSize, y * mTileSize, mTileSize, mTileSize, theTile->mColor);
 		}
 	}
+
+	//Debug checkpoint
+	for (Checkpoint& checkpoint : mAllCheckpoints)
+	{
+		DrawRectangleLinesEx(checkpoint.mArea, 2.0f, checkpoint.mIsPassed ? GREEN : BLUE);
+	}
 }
 
-const TileData* Environment::GetTileDataAtPos( int x, int y ) const
+Checkpoint* Environment::GetCheckpointAtPos(int tileX, int tileY)
 {
-	if(x >= mTilesX || x < 0 || y >= mTilesY || y < 0)
+	if (tileX >= mTilesX || tileX < 0 || tileY >= mTilesY || tileY < 0)
 	{
 		return nullptr;
 	}
 
-	return &mTilesData[mTiles[y][x]];
+	Vector2 pos { tileX * mTileSize, tileY * mTileSize };
+	for (Checkpoint& checkpoint : mAllCheckpoints)
+	{
+		if (CheckCollisionPointRec(pos, checkpoint.mArea))
+		{
+			return &checkpoint;
+		}
+	}
+
+	return nullptr;
+}
+
+const TileData* Environment::GetTileDataAtPos(int tileX, int tileY) const
+{
+	if(tileX >= mTilesX || tileX < 0 || tileY >= mTilesY || tileY < 0)
+	{
+		return nullptr;
+	}
+
+	return &mTilesData[mTiles[tileY][tileX]];
 }

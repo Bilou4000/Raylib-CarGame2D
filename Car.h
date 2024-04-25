@@ -10,6 +10,7 @@ public:
 	void Update(float deltaTime);
 	void Draw();
 
+	bool CheckCollisionWith(float carPosX, float carPosY, const Rectangle& bounds);
 	Vector2 GetHitboxPos(float carPosX, float carPosY, int hitboxIndex);
 
 	float mX = 640;

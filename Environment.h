@@ -1,15 +1,24 @@
 #pragma once
 
+#include <vector>
 #include "Tile.h"
+
+struct Checkpoint
+{
+    bool mIsPassed = false;
+    Rectangle mArea {};
+};
 
 class Environment
 {
 public:
 	Environment();
 
+    void InitCheckpoints();
 	void Draw();
 
-	const TileData* GetTileDataAtPos(int x, int y) const; 
+    Checkpoint* GetCheckpointAtPos(int tileX, int tileY);
+	const TileData* GetTileDataAtPos(int tileX, int tileY) const;
 
 	const float mTileSize = 50.0f;
 
@@ -38,4 +47,6 @@ private:
 	};
 
     TileData mTilesData[(int) TilesType::MAX_COUNT];
+
+    std::vector<Checkpoint> mAllCheckpoints;
 };
