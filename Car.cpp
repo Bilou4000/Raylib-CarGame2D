@@ -46,119 +46,63 @@ void Car::Update(float deltaTime)
 		mAngle -= mVelocity * DEG2RAD * deltaTime;
 	}
 
-	int tilePosX = floorf((mX / mEnvironment.mTileSize));
-	int tilePosY = floorf((mY / mEnvironment.mTileSize));
-	//printf( "%d %d\n", tilePosX, tilePosY);
 
-	//const TileData* tiledata = mEnvironment.GetTileDataAtPos(tilePosX,tilePosY);
-
-	float speedMultiplier = 1.0f;
-
+	//Get pos of car in environment
 	int carRow = floorf(mY / mEnvironment.mTileSize);
 	int carColumn = floorf(mX / mEnvironment.mTileSize);
 
+	const TileData* tiledata = mEnvironment.GetTileDataAtPos(carColumn, carRow);
+
+	float speedMultiplier = 1.0f;
+	if (tiledata != nullptr)
+	{
+		speedMultiplier = tiledata->mSpeedMultiplier;
+	}
+
+	//MOVE in forward
+	mCurrentSpeedMultiplier = Lerp(mCurrentSpeedMultiplier, speedMultiplier, deltaTime * 10.0f);
+	//printf( "%f\n", mCurrentSpeedMultiplier );
+	//float speedMultiplier = tiledata != nullptr ? tiledata->mSpeedMultiplier : 1.0f;
+
+	float x = mX + cos(mAngle) * (mSpeed * mCurrentSpeedMultiplier * deltaTime);
+	float y = mY + sin(mAngle) * (mSpeed * mCurrentSpeedMultiplier * deltaTime);
+
+	//car collide ?
 	bool hasCollided = false;
 	for (int offsetRow = -1; offsetRow <= 1; offsetRow++)
 	{
 		for (int offsetColumn = -1; offsetColumn <= 1; offsetColumn++)
 		{
+			float tilePosX = carColumn + offsetColumn;
+			float tilePosY = carRow + offsetRow;
+
 			//check if car is on same pos as tile and check the 8 around it
-			if (carRow + offsetRow < mEnvironment.mTilesX && carColumn + offsetColumn < mEnvironment.mTilesY
-				&& carRow + offsetRow >= 0 && carColumn + offsetColumn >= 0)
+			if (tilePosY < mEnvironment.mTilesY && tilePosX < mEnvironment.mTilesX
+				&& tilePosY >= 0 && tilePosX >= 0)
 			{
-				const TileData* tiledata = mEnvironment.GetTileDataAtPos(carColumn + offsetColumn, carRow + offsetRow);
+				const TileData* tiledata = mEnvironment.GetTileDataAtPos(tilePosX, tilePosY);
 
-				if (tiledata != nullptr)
+				if (tiledata != nullptr && tiledata->mIsObstacle)
 				{
-					if (offsetRow == 0 && offsetColumn == 0)
-					{
-						speedMultiplier = tiledata->mSpeedMultiplier;
-					}
+					Rectangle tile { tilePosX * mEnvironment.mTileSize, tilePosY * mEnvironment.mTileSize,
+						mEnvironment.mTileSize, mEnvironment.mTileSize };
 
-					if (tiledata->mIsObstacle)
+					if (CheckCollisionCircleRec({ x, y }, mHeight / 2, tile))
 					{
-						float tilePosX = carColumn + offsetColumn;
-						float tilePosY = carRow + offsetRow;
-						if (CheckCollisionCircleRec({ mX, mY }, mWidth, { tilePosX * mEnvironment.mTileSize, tilePosY * mEnvironment.mTileSize }))
-						{
-							mSpeed = 0;
-						}
-						//int carrow = floorf(my / menvironment.mtilesize);
-						//int carcolumn = floorf(mx / menvironment.mtilesize);
-
+						x = mX;
+						y = mY;
+						mSpeed = 0;
+						hasCollided = true;
+						break;
 					}
 				}
-				//}
-	//			//if (tiledata != nullptr && tiledata->mIsObstacle) 
-	//			//{
-	//			//	mSpeed = 0;
-	//			//}
-
-
 			}
-	////			//Brick& brick = bricks[ballRow + offsetRow][ballColumn + offsetColumn];
-
-	////			//if brick is already destroyed, pass
-	////			//if (brick.isDestroyed)
-	////			//{
-	////			//	continue;
-	////			//}
-
-	////			////if brick isn't destroy, destroy it
-	////			//if (Collision(brick.brickRec, ball.ballRec))
-	////			//{
-	////			//	ball.BounceOnBrick();
-	////			//	hasCollided = true;
-	////			//	brick.isDestroyed = true;
-
-	////			//	brickCount--;
-	////			//	score += 10;
-
-	////			//	if (scoreThreshold <= score && life < maxLife)
-	////			//	{
-	////			//		life += 1;
-	////			//		scoreThreshold += bonusScore;
-	////			//	}
-
-	////			//	//check if every brick has been destroy
-	////			//	if (brickCount <= 0)
-	////			//	{
-	////			//		if (endOfGame)
-	////			//		{
-	////			//			EndOfGame();
-	////			//			return true;
-	////			//		}
-
-	////			//		startRowBricks += 3;
-	////			//		Init();
-	////		}
-
-	////		break;
+		}
+		if (hasCollided)
+		{
+			break;
 		}
 	}
-
-	//if(tiledata != nullptr)
-	//{
-	//	speedMultiplier = tiledata->mSpeedMultiplier;
-
-	//	if (tiledata->mIsObstacle)
-	//	{
-	//		//int carrow = floorf(my / menvironment.mtilesize);
-	//		//int carcolumn = floorf(mx / menvironment.mtilesize);
-	//		//mSpeed = 0;
-	//		//mX = mX - cos(mAngle) * (mSpeed * mCurrentSpeedMultiplier * deltaTime) * 5;
-	//		//mY = mY - sin(mAngle) * (mSpeed * mCurrentSpeedMultiplier * deltaTime) * 5;
-	//		//mX -= 1;
-	//		//mY -= 1;
-	//	}
-	//}
-
-	mCurrentSpeedMultiplier = Lerp( mCurrentSpeedMultiplier, speedMultiplier, deltaTime * 10.0f );
-	//printf( "%f\n", mCurrentSpeedMultiplier );
-	//float speedMultiplier = tiledata != nullptr ? tiledata->mSpeedMultiplier : 1.0f;
-
-	float x = mX + cos(mAngle) * ( mSpeed * mCurrentSpeedMultiplier * deltaTime );
-	float y = mY + sin(mAngle) * ( mSpeed * mCurrentSpeedMultiplier * deltaTime );
 
 	mX = x;
 	mY = y;
@@ -188,6 +132,34 @@ void Car::Draw()
 	Rectangle rec{ mX, mY, mWidth, mHeight};
 	Vector2 origin{ mWidth / 1.3f, mHeight / 2 };
 
-	DrawRectanglePro(rec, origin, mAngle * ( 180 / PI ), WHITE);
+	DrawRectanglePro(rec, origin, mAngle * RAD2DEG, WHITE);
 
+	DrawCircleLines(mX, mY, mHeight / 2, RED);
+
+	//DEBUG
+	int carRow = floorf(mY / mEnvironment.mTileSize);
+	int carColumn = floorf(mX / mEnvironment.mTileSize);
+
+	for (int offsetRow = -1; offsetRow <= 1; offsetRow++)
+	{
+		for (int offsetColumn = -1; offsetColumn <= 1; offsetColumn++)
+		{
+			float tilePosX = carColumn + offsetColumn;
+			float tilePosY = carRow + offsetRow;
+
+			//check if car is on same pos as tile and check the 8 around it
+			if (tilePosY < mEnvironment.mTilesY && tilePosX < mEnvironment.mTilesX
+				&& tilePosY >= 0 && tilePosX >= 0)
+			{
+				const TileData* tiledata = mEnvironment.GetTileDataAtPos(tilePosX, tilePosY);
+
+				if (tiledata != nullptr)
+				{
+					const float tileSize = mEnvironment.mTileSize;
+				
+					DrawRectangleLines(tilePosX * tileSize, tilePosY * tileSize, tileSize, tileSize, tiledata->mIsObstacle ? RED : WHITE);
+				}
+			}
+		}
+	}
 }
