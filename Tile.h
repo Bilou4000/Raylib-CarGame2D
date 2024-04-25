@@ -7,6 +7,10 @@ enum class TilesType
 	GRASS,
 	ROAD,
 	OBSTACLE,
+	CHECKPOINT,
+	FINISHLINE,
+
+	MAX_COUNT,
 };
 
 struct TileData

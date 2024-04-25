@@ -37,7 +37,5 @@ private:
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	};
 
-	TileData mTileGrass;
-	TileData mTileRoad;
-    TileData mTileObstacle;
+    TileData mTilesData[(int) TilesType::MAX_COUNT];
 };

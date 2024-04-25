@@ -2,14 +2,25 @@
 
 Environment::Environment()
 {
-	mTileGrass.mColor = LIME;
-	mTileGrass.mSpeedMultiplier = 0.5f;
+	TileData& tileGrass = mTilesData[(int)TilesType::GRASS];
+	tileGrass.mColor = LIME;
+	tileGrass.mSpeedMultiplier = 0.5f;
 
-	mTileRoad.mColor = DARKGRAY;
-	mTileRoad.mSpeedMultiplier = 1.0f;
+	TileData& tileRoad = mTilesData[(int) TilesType::ROAD];
+	tileRoad.mColor = DARKGRAY;
+	tileRoad.mSpeedMultiplier = 1.0f;
 
-	mTileObstacle.mColor = DARKGREEN;
-	mTileObstacle.mIsObstacle = true;
+	TileData& tileObstacle = mTilesData[(int) TilesType::OBSTACLE];
+	tileObstacle.mColor = DARKGREEN;
+	tileObstacle.mIsObstacle = true;
+
+	TileData& tileCheckpoint = mTilesData[(int) TilesType::CHECKPOINT];
+	tileCheckpoint.mColor = LIGHTGRAY;
+	tileCheckpoint.mSpeedMultiplier = tileRoad.mSpeedMultiplier;
+
+	TileData& tileFinishLine = mTilesData[(int) TilesType::FINISHLINE];
+	tileCheckpoint.mColor = WHITE;
+	tileCheckpoint.mSpeedMultiplier = tileRoad.mSpeedMultiplier;
 }
 
 void Environment::Draw()
@@ -31,15 +42,5 @@ const TileData* Environment::GetTileDataAtPos( int x, int y ) const
 		return nullptr;
 	}
 
-	switch ( (TilesType)mTiles[y][x] )
-	{
-		case TilesType::GRASS:
-			return &mTileGrass;
-		case TilesType::ROAD:
-			return &mTileRoad;
-		case TilesType::OBSTACLE:
-			return &mTileObstacle;
-	}
-
-	return nullptr;
+	return &mTilesData[mTiles[y][x]];
 }
