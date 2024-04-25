@@ -15,12 +15,12 @@ Environment::Environment()
 	tileObstacle.mIsObstacle = true;
 
 	TileData& tileCheckpoint = mTilesData[(int) TilesType::CHECKPOINT];
-	tileCheckpoint.mColor = LIGHTGRAY;
+	tileCheckpoint.mColor = GRAY;
 	tileCheckpoint.mSpeedMultiplier = tileRoad.mSpeedMultiplier;
 
 	TileData& tileFinishLine = mTilesData[(int) TilesType::FINISHLINE];
-	tileCheckpoint.mColor = WHITE;
-	tileCheckpoint.mSpeedMultiplier = tileRoad.mSpeedMultiplier;
+	tileFinishLine.mColor = WHITE;
+	tileFinishLine.mSpeedMultiplier = tileRoad.mSpeedMultiplier;
 }
 
 void Environment::Draw()
