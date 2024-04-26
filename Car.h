@@ -11,6 +11,8 @@ public:
 	bool Update(float deltaTime);
 	void Draw();
 
+	void DrawDebug();
+
 	bool CheckCollisionWith(float carPosX, float carPosY, const Rectangle& bounds);
 	Vector2 GetHitboxPos(float carPosX, float carPosY, int hitboxIndex);
 

@@ -15,7 +15,6 @@ public:
 	void ResetTimer();
 
 private:
-	//Variable
 	Environment environment {};
 	Car car { environment };
 

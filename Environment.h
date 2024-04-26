@@ -33,6 +33,8 @@ public:
 
 private:
 
+    //Map of race
+    //0 is grass, 1 is road, 2 is obstacle, 3 is checkpoint and 4 is finishLine
 	int mTiles[mTilesY][mTilesX]
 	{
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },

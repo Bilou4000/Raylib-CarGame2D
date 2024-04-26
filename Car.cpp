@@ -184,42 +184,47 @@ void Car::Draw()
 
 	DrawTexturePro(mCarTexture, source, dest, origin, mAngle * RAD2DEG, WHITE);
 
-	//Draw lap
+	//Show lap count
 	DrawText(TextFormat("Lap %i/%i", mRound, mMaxRound), 10, 10, 50, WHITE);
 
 	//DEBUG *******************************************************************************
-	//Vector2 hitboxForwardPos = GetHitboxPos(mX, mY, 0);
-	//Vector2 hitboxBackwardPos = GetHitboxPos(mX, mY, 1);
+	//DrawDebug();
+}
 
-	//DrawCircleLines(hitboxForwardPos.x, hitboxForwardPos.y, mHitboxRadius, RED);
-	//DrawCircleLines(hitboxBackwardPos.x, hitboxBackwardPos.y, mHitboxRadius, RED);
+void Car::DrawDebug()
+{
+	Vector2 hitboxForwardPos = GetHitboxPos(mX, mY, 0);
+	Vector2 hitboxBackwardPos = GetHitboxPos(mX, mY, 1);
 
-	//int carRow = floorf(mY / mEnvironment.mTileSize);
-	//int carColumn = floorf(mX / mEnvironment.mTileSize);
+	DrawCircleLines(hitboxForwardPos.x, hitboxForwardPos.y, mHitboxRadius, RED);
+	DrawCircleLines(hitboxBackwardPos.x, hitboxBackwardPos.y, mHitboxRadius, RED);
 
-	//for (int offsetRow = -1; offsetRow <= 1; offsetRow++)
-	//{
-	//	for (int offsetColumn = -1; offsetColumn <= 1; offsetColumn++)
-	//	{
-	//		float tilePosX = carColumn + offsetColumn;
-	//		float tilePosY = carRow + offsetRow;
+	int carRow = floorf(mY / mEnvironment.mTileSize);
+	int carColumn = floorf(mX / mEnvironment.mTileSize);
 
-	//		//check if car is on same pos as tile and check the 8 around it
-	//		if (tilePosY < mEnvironment.mTilesY && tilePosX < mEnvironment.mTilesX
-	//			&& tilePosY >= 0 && tilePosX >= 0)
-	//		{
-	//			const TileData* tiledata = mEnvironment.GetTileDataAtPos(tilePosX, tilePosY);
+	for (int offsetRow = -1; offsetRow <= 1; offsetRow++)
+	{
+		for (int offsetColumn = -1; offsetColumn <= 1; offsetColumn++)
+		{
+			float tilePosX = carColumn + offsetColumn;
+			float tilePosY = carRow + offsetRow;
 
-	//			if (tiledata != nullptr)
-	//			{
-	//				const float tileSize = mEnvironment.mTileSize;
-	//			
-	//				//Draw all tiles around car, if one is an obstacle -> turn red
-	//				DrawRectangleLines(tilePosX * tileSize, tilePosY * tileSize, tileSize, tileSize, tiledata->mIsObstacle ? RED : WHITE);
-	//			}
-	//		}
-	//	}
-	//}
+			//check if car is on same pos as tile and check the 8 around it
+			if (tilePosY < mEnvironment.mTilesY && tilePosX < mEnvironment.mTilesX
+				&& tilePosY >= 0 && tilePosX >= 0)
+			{
+				const TileData* tiledata = mEnvironment.GetTileDataAtPos(tilePosX, tilePosY);
+
+				if (tiledata != nullptr)
+				{
+					const float tileSize = mEnvironment.mTileSize;
+
+					//Draw all tiles around car, if one is an obstacle -> turn red
+					DrawRectangleLines(tilePosX * tileSize, tilePosY * tileSize, tileSize, tileSize, tiledata->mIsObstacle ? RED : WHITE);
+				}
+			}
+		}
+	}
 }
 
 //Collision with the car
