@@ -61,8 +61,8 @@ void GameManager::DrawStartRace()
 	float fontSize = 380;
 	float outlineSize = 5;
 
-	Color color = BLACK;
-	Color outlineColor = WHITE;
+	Color color = WHITE;
+	Color outlineColor = BLACK;
 
 	DrawText(text, posX - outlineSize, posY - outlineSize, fontSize, outlineColor);
 	DrawText(text, posX + outlineSize, posY - outlineSize, fontSize, outlineColor);
