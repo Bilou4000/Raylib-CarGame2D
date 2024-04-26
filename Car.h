@@ -7,7 +7,8 @@ class Car
 public:
 	Car(Environment& environment);
 
-	void Update(float deltaTime);
+	void Init();
+	bool Update(float deltaTime);
 	void Draw();
 
 	bool CheckCollisionWith(float carPosX, float carPosY, const Rectangle& bounds);
@@ -20,15 +21,19 @@ private:
 	const float mHeight = 30;
 	const float mHitboxRadius = mHeight / 2;
 
-	const float mVelocity = 200;
+	const float mVelocity = 100.0f;
 	const float mAccelerationSpeed = 5.0f;
 	const float mDeccelerationSpeed = 3.0f;
-	const float mMaxSpeed = 400.0f;
+	const float mMaxSpeed = 200.0f;
 
 	float mAngle = 0;
 	float mSpeed = 0;
 	float mCurrentSpeedMultiplier = 0.0f;
 
+	int mRound = 1;
+	int mMaxRound = 3;
+
+	Texture2D mCarTexture;
 	Environment& mEnvironment;
 };
 

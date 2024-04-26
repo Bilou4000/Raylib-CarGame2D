@@ -10,11 +10,23 @@ Car::Car( Environment& environment )
 {
 }
 
-void Car::Update(float deltaTime)
+void Car::Init()
 {
-	//Move
+	mCarTexture = LoadTexture("resources/car_blue_small_5.png");
+	mRound = 1;
+
+	mX = 860;
+	mY = 600;
+	mSpeed = 0;
+	mAngle = 0;
+}
+
+bool Car::Update(float deltaTime)
+{
 	float targetSpeed = 0.0f;
 	float accelerationSpeed = mAccelerationSpeed;
+
+	//Go forward and Backward
 	if (IsKeyDown(KEY_W))
 	{
 		targetSpeed = mMaxSpeed;
@@ -30,6 +42,7 @@ void Car::Update(float deltaTime)
 
 	mSpeed = Lerp(mSpeed, targetSpeed, deltaTime * accelerationSpeed);
 
+	//Turn
 	if (IsKeyDown(KEY_D))
 	{
 		mAngle += mSpeed / mMaxSpeed * mVelocity * DEG2RAD * deltaTime;
@@ -47,6 +60,7 @@ void Car::Update(float deltaTime)
 
 	const TileData* tiledata = mEnvironment.GetTileDataAtPos(carColumn, carRow);
 
+	//change spped of car considering tiles
 	float speedMultiplier = 1.0f;
 	if (tiledata != nullptr)
 	{
@@ -55,8 +69,6 @@ void Car::Update(float deltaTime)
 
 	//MOVE in forward
 	mCurrentSpeedMultiplier = Lerp(mCurrentSpeedMultiplier, speedMultiplier, deltaTime * 10.0f);
-	//printf( "%f\n", mCurrentSpeedMultiplier );
-	//float speedMultiplier = tiledata != nullptr ? tiledata->mSpeedMultiplier : 1.0f;
 
 	float x = mX + cos(mAngle) * (mSpeed * mCurrentSpeedMultiplier * deltaTime);
 	float y = mY + sin(mAngle) * (mSpeed * mCurrentSpeedMultiplier * deltaTime);
@@ -78,11 +90,13 @@ void Car::Update(float deltaTime)
 
 				if (tiledata != nullptr)
 				{
+					//check if tile is an obstacle
 					if (tiledata->mIsObstacle)
 					{
 						Rectangle tile { tilePosX * mEnvironment.mTileSize, tilePosY * mEnvironment.mTileSize,
 							mEnvironment.mTileSize, mEnvironment.mTileSize };
 
+						//check if has collided
 						if (CheckCollisionWith(x, y, tile))
 						{
 							x = mX;
@@ -92,16 +106,34 @@ void Car::Update(float deltaTime)
 							break;
 						}
 					}
+					//check if tile is an obstacle or a finish line
 					else if (tiledata->mTileType == TilesType::CHECKPOINT || tiledata->mTileType == TilesType::FINISHLINE)
 					{
 						bool canPass = true;
 
+						//get the checkpoint at the car pos
 						Checkpoint* checkpoint = mEnvironment.GetCheckpointAtPos(tilePosX, tilePosY);
 						if (checkpoint->mIsFinishLine)
 						{
+							//check if we can pass finish line
 							canPass = mEnvironment.CanPassFinishLine();
+							//if yes and all round not completed -> new round + reset checkpoint
+							if (mEnvironment.CanPassFinishLine() && mRound < mMaxRound)
+							{
+								mRound += 1;
+								for (Checkpoint& checkpoint : mEnvironment.mAllCheckpoints)
+								{
+									checkpoint.mIsPassed = false;
+								}
+							}
+							//if yes and all round completed -> end game
+							else if (mEnvironment.CanPassFinishLine() && mRound >= mMaxRound)
+							{
+								return true;
+							}
 						}
 
+						//passing a checkpoint if not already passed
 						if (canPass && !checkpoint->mIsPassed && CheckCollisionWith(mX, mY, checkpoint->mArea))
 						{
 							checkpoint->mIsPassed = true;
@@ -117,8 +149,9 @@ void Car::Update(float deltaTime)
 		}
 	}
 
+	//new Pos of car
 	mX = x;
-	mY = y;
+	mY = y ;
 
 	//Collision on wall
 	if (mY < 0)
@@ -138,49 +171,58 @@ void Car::Update(float deltaTime)
 		mY = GetScreenHeight(); 
 	}
 
+	return false;
 }
 
 void Car::Draw()
 {
-	Rectangle rec{ mX, mY, mWidth, mHeight};
+	//Draw Car
+	Rectangle source { 0, 0, 65, 37 };
+	Rectangle dest { mX, mY, 65, 35 };
+
 	Vector2 origin{ mWidth / 1.3f, mHeight / 2 };
 
-	DrawRectanglePro(rec, origin, mAngle * RAD2DEG, WHITE);
+	DrawTexturePro(mCarTexture, source, dest, origin, mAngle * RAD2DEG, WHITE);
 
-	Vector2 hitboxForwardPos = GetHitboxPos(mX, mY, 0);
-	Vector2 hitboxBackwardPos = GetHitboxPos(mX, mY, 1);
+	//Draw lap
+	DrawText(TextFormat("Lap %i/%i", mRound, mMaxRound), 10, 10, 50, WHITE);
 
-	DrawCircleLines(hitboxForwardPos.x, hitboxForwardPos.y, mHitboxRadius, RED);
-	DrawCircleLines(hitboxBackwardPos.x, hitboxBackwardPos.y, mHitboxRadius, RED);
+	//DEBUG *******************************************************************************
+	//Vector2 hitboxForwardPos = GetHitboxPos(mX, mY, 0);
+	//Vector2 hitboxBackwardPos = GetHitboxPos(mX, mY, 1);
 
-	//DEBUG
-	int carRow = floorf(mY / mEnvironment.mTileSize);
-	int carColumn = floorf(mX / mEnvironment.mTileSize);
+	//DrawCircleLines(hitboxForwardPos.x, hitboxForwardPos.y, mHitboxRadius, RED);
+	//DrawCircleLines(hitboxBackwardPos.x, hitboxBackwardPos.y, mHitboxRadius, RED);
 
-	for (int offsetRow = -1; offsetRow <= 1; offsetRow++)
-	{
-		for (int offsetColumn = -1; offsetColumn <= 1; offsetColumn++)
-		{
-			float tilePosX = carColumn + offsetColumn;
-			float tilePosY = carRow + offsetRow;
+	//int carRow = floorf(mY / mEnvironment.mTileSize);
+	//int carColumn = floorf(mX / mEnvironment.mTileSize);
 
-			//check if car is on same pos as tile and check the 8 around it
-			if (tilePosY < mEnvironment.mTilesY && tilePosX < mEnvironment.mTilesX
-				&& tilePosY >= 0 && tilePosX >= 0)
-			{
-				const TileData* tiledata = mEnvironment.GetTileDataAtPos(tilePosX, tilePosY);
+	//for (int offsetRow = -1; offsetRow <= 1; offsetRow++)
+	//{
+	//	for (int offsetColumn = -1; offsetColumn <= 1; offsetColumn++)
+	//	{
+	//		float tilePosX = carColumn + offsetColumn;
+	//		float tilePosY = carRow + offsetRow;
 
-				if (tiledata != nullptr)
-				{
-					const float tileSize = mEnvironment.mTileSize;
-				
-					DrawRectangleLines(tilePosX * tileSize, tilePosY * tileSize, tileSize, tileSize, tiledata->mIsObstacle ? RED : WHITE);
-				}
-			}
-		}
-	}
+	//		//check if car is on same pos as tile and check the 8 around it
+	//		if (tilePosY < mEnvironment.mTilesY && tilePosX < mEnvironment.mTilesX
+	//			&& tilePosY >= 0 && tilePosX >= 0)
+	//		{
+	//			const TileData* tiledata = mEnvironment.GetTileDataAtPos(tilePosX, tilePosY);
+
+	//			if (tiledata != nullptr)
+	//			{
+	//				const float tileSize = mEnvironment.mTileSize;
+	//			
+	//				//Draw all tiles around car, if one is an obstacle -> turn red
+	//				DrawRectangleLines(tilePosX * tileSize, tilePosY * tileSize, tileSize, tileSize, tiledata->mIsObstacle ? RED : WHITE);
+	//			}
+	//		}
+	//	}
+	//}
 }
 
+//Collision with the car
 bool Car::CheckCollisionWith(float carPosX, float carPosY, const Rectangle& bounds)
 {
 	Vector2 hitboxForwardPos = GetHitboxPos(carPosX, carPosY, 0);
@@ -189,12 +231,15 @@ bool Car::CheckCollisionWith(float carPosX, float carPosY, const Rectangle& boun
 	return CheckCollisionCircleRec(hitboxForwardPos, mHitboxRadius, bounds) || CheckCollisionCircleRec(hitboxBackwardPos, mHitboxRadius, bounds);
 }
 
+//Get new car Hitbox pos
 Vector2 Car::GetHitboxPos(float carPosX, float carPosY, int hitboxIndex)
 {
+	//forward hitbox
 	if (hitboxIndex == 0)
 	{
 		return { carPosX, carPosY };
 	}
+	//backward hitbox
 	else if (hitboxIndex == 1)
 	{
 		return { carPosX + cos(mAngle) * (-mHitboxRadius * 2), carPosY + sin(mAngle) * (-mHitboxRadius * 2)};
