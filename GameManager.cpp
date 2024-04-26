@@ -2,33 +2,40 @@
 
 void GameManager::Init()
 {
-	car.mX = 860;
-	car.mY = 624;
+    car.Init();
+    environment.Init();
 }
 
-void GameManager::Update(float deltaTime)
+bool GameManager::Update(float deltaTime)
 {
+	mTimer += GetFrameTime();
+
 	car.Update(deltaTime);
+
+	if (car.Update(deltaTime))
+	{
+		Init();
+		return true;
+	}
+
+	return false;
 }
 
 void GameManager::Draw()
 {
 	environment.Draw();
 	car.Draw();
+
+	DrawText(TextFormat("Time : %.2fs", mTimer), GetScreenWidth() - (MeasureText(TextFormat("Time : %.2fs", mTimer), 50)) - 10, 10, 50, WHITE);
+	//DrawText(TextFormat("Lap %i/%i", mRound, mMaxRound), GetScreenWidth() - (MeasureText(TextFormat("Lap %i/%i", mRound, mMaxRound), 50)) - 10, 10, 50, WHITE);
 }
 
-bool GameManager::Collision(Rectangle a, Rectangle b)
+float GameManager::GetTimer()
 {
-    int xMinA = a.x;
-    int yMinA = a.y;
-    int xMaxA = a.x + a.width;
-    int yMaxA = a.y + a.height;
+	return mTimer;
+}
 
-    int xMinB = b.x;
-    int yMinB = b.y;
-    int xMaxB = b.x + b.width;
-    int yMaxB = b.y + b.height;
-
-    return (!(xMinB > xMaxA || yMinB > yMaxA
-        || xMaxB < xMinA || yMaxB < yMinA));
+void GameManager::ResetTimer()
+{
+	mTimer = 0;
 }
