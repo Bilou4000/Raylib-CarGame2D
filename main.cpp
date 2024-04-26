@@ -12,7 +12,7 @@ int screenHeight = 720;
 bool ending = false;
 float gameTime = 0;
 
-typedef enum GameScreen { MENU, GAMEPLAY, ENDING } GameScreen;
+typedef enum GameScreen { MENU, STARTOFGAMEPLAY, GAMEPLAY, ENDING } GameScreen;
 GameScreen currentScreen;
 GameManager gameManager;
 
@@ -62,16 +62,28 @@ void Update()
 
             if (IsKeyPressed(KEY_ENTER))
             {
-                currentScreen = GAMEPLAY;
+                currentScreen = STARTOFGAMEPLAY;
                 //gameManager.SetScoreThreshold();
+            }
+        }
+        break;
+        case STARTOFGAMEPLAY:
+        {
+            //StopMusicStream(startMusic);
+            //StopMusicStream(endMusic);
+
+            //PlayMusicStream(mainMusic);
+            //UpdateMusicStream(mainMusic);
+            gameManager.StartRace();
+
+            if (gameManager.StartRace())
+            {
+                currentScreen = GAMEPLAY;
             }
         }
         break;
         case GAMEPLAY:
         {
-            //StopMusicStream(startMusic);
-            //StopMusicStream(endMusic);
-
             //PlayMusicStream(mainMusic);
             //UpdateMusicStream(mainMusic);
             ending = gameManager.Update(deltaTime);
@@ -94,7 +106,7 @@ void Update()
 
             if (IsKeyPressed(KEY_R))
             {
-                currentScreen = GAMEPLAY;
+                currentScreen = STARTOFGAMEPLAY;
             }
 
             if (IsKeyPressed(KEY_SEMICOLON))
@@ -120,9 +132,14 @@ void Draw()
             DrawText("Press ENTER to PLAY", (GetScreenWidth() / 2) - (MeasureText("Press ENTER to PLAY", 50) / 2), 400, 50, GRAY);
         }
         break;
+        case STARTOFGAMEPLAY:
+        {
+            gameManager.Draw();
+            gameManager.DrawStartRace();
+        }
+        break;
         case GAMEPLAY:
         {
-            //DrawRectangle(0, 900, GetScreenWidth(), 100, { 255, 255, 255, 50 });
             gameManager.Draw();
         }
         break;
