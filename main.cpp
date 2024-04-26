@@ -147,7 +147,8 @@ void Draw()
             DrawText("Car Game 2D", (GetScreenWidth() / 2) - (MeasureText("Car Game 2D", 100) / 2), GetScreenHeight() / 3, 100, RED);
             DrawText("Press ENTER to PLAY", (GetScreenWidth() / 2) - (MeasureText("Press ENTER to PLAY", 50) / 2), 400, 50, GRAY);
 
-            DrawTextureEx()
+            DrawTextureEx(firstCarTexture, { 200, 100 }, 45, 2, WHITE);
+            DrawTextureEx(secondCarTexture, { 1000, 400 }, -20, 1.5f, WHITE);
         }
         break;
         case STARTOFGAMEPLAY:
