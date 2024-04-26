@@ -5,16 +5,23 @@
 
 using namespace std;
 
+typedef enum GameScreen { MENU, STARTOFGAMEPLAY, GAMEPLAY, ENDING } GameScreen;
+GameScreen currentScreen;
+GameManager gameManager;
+
+Music startMusic;
+Music mainMusic;
+Music endMusic;
+
+Texture2D firstCarTexture;
+Texture2D secondCarTexture;
+
 //Variable
 int screenWidth = 1280;
 int screenHeight = 720;
 
 bool ending = false;
 float gameTime = 0;
-
-typedef enum GameScreen { MENU, STARTOFGAMEPLAY, GAMEPLAY, ENDING } GameScreen;
-GameScreen currentScreen;
-GameManager gameManager;
 
 //Function
 void Load();
@@ -44,7 +51,15 @@ void Load()
     currentScreen = MENU;
     SetTargetFPS(60);
 
+    InitAudioDevice();
     gameManager.Init();
+
+    startMusic = LoadMusicStream("resources/ForzaHorizon.mp3");
+    mainMusic = LoadMusicStream("resources/Odesza.mp3");
+    endMusic = LoadMusicStream("resources/Pyre.mp3");
+
+    firstCarTexture = LoadTexture("resources/car_green_3.png");
+    secondCarTexture = LoadTexture("resources/car_red_5.png");
 }
 
 void Update()
@@ -55,25 +70,25 @@ void Update()
     {
         case MENU:
         {
-            //StopMusicStream(endMusic);
+            StopMusicStream(endMusic);
 
-            //PlayMusicStream(startMusic);
-            //UpdateMusicStream(startMusic);
+            PlayMusicStream(startMusic);
+            UpdateMusicStream(startMusic);
 
             if (IsKeyPressed(KEY_ENTER))
             {
                 currentScreen = STARTOFGAMEPLAY;
-                //gameManager.SetScoreThreshold();
             }
         }
         break;
         case STARTOFGAMEPLAY:
         {
-            //StopMusicStream(startMusic);
-            //StopMusicStream(endMusic);
+            StopMusicStream(startMusic);
+            StopMusicStream(endMusic);
 
-            //PlayMusicStream(mainMusic);
-            //UpdateMusicStream(mainMusic);
+            PlayMusicStream(mainMusic);
+            UpdateMusicStream(mainMusic);
+
             gameManager.StartRace();
 
             if (gameManager.StartRace())
@@ -84,8 +99,9 @@ void Update()
         break;
         case GAMEPLAY:
         {
-            //PlayMusicStream(mainMusic);
-            //UpdateMusicStream(mainMusic);
+            PlayMusicStream(mainMusic);
+            UpdateMusicStream(mainMusic);
+
             ending = gameManager.Update(deltaTime);
             gameTime = gameManager.GetTimer();
 
@@ -97,10 +113,10 @@ void Update()
         break;
         case ENDING:
         {
-            //StopMusicStream(mainMusic);
+            StopMusicStream(mainMusic);
 
-            //PlayMusicStream(endMusic);
-            //UpdateMusicStream(endMusic);
+            PlayMusicStream(endMusic);
+            UpdateMusicStream(endMusic);
 
             gameManager.ResetTimer();
 
@@ -130,6 +146,8 @@ void Draw()
         {
             DrawText("Car Game 2D", (GetScreenWidth() / 2) - (MeasureText("Car Game 2D", 100) / 2), GetScreenHeight() / 3, 100, RED);
             DrawText("Press ENTER to PLAY", (GetScreenWidth() / 2) - (MeasureText("Press ENTER to PLAY", 50) / 2), 400, 50, GRAY);
+
+            DrawTextureEx()
         }
         break;
         case STARTOFGAMEPLAY:
@@ -147,9 +165,6 @@ void Draw()
         {
             DrawText("Race Finished !", (GetScreenWidth() / 2) - (MeasureText("Race Finished !", 150) / 2), 100, 150, RED);
 
-            //DrawText("SCORE", (GetScreenWidth() / 2) - (MeasureText("SCORE", 100) / 2), 300, 100, ORANGE);
-            //DrawText(TextFormat("%i", score), (GetScreenWidth() / 2) - (MeasureText(TextFormat("%i", score), 75) / 2), 400, 75, WHITE);
-
             DrawText("TIME", (GetScreenWidth() / 2) - (MeasureText("TIME", 100) / 2), 300, 100, ORANGE);
             DrawText(TextFormat("%.2fs", gameTime), (GetScreenWidth() / 2) - (MeasureText(TextFormat("%.2fs", gameTime), 75) / 2), 400, 75, BLACK);
 
@@ -166,5 +181,6 @@ void Draw()
 
 void Unload()
 {
+    CloseAudioDevice();
     CloseWindow();
 }

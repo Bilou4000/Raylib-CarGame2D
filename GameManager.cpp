@@ -39,7 +39,7 @@ void GameManager::Draw()
 
 bool GameManager::StartRace()
 {
-	//static int timer = 3;
+	//Countdown
 	static float timeElapsed = 0.0f;
 	timeElapsed += GetFrameTime();
 	if (timeElapsed >= mTimeOfCountdown)
@@ -53,6 +53,7 @@ bool GameManager::StartRace()
 
 void GameManager::DrawStartRace()
 {
+	//Draw Countdown
 	DrawText(TextFormat("%i", mCountdown), GetScreenWidth() / 2 - (MeasureText(TextFormat("%i", mCountdown), 380) / 2), 180, 380, MAROON);
 }
 

@@ -21,8 +21,8 @@ private:
 	Environment environment {};
 	Car car { environment };
 
-	const int mMaxCountdown = 3;
-	const float mTimeOfCountdown = 1.5f;
+	const int mMaxCountdown = 5;
+	const float mTimeOfCountdown = 1.8f;
 
 
 	float mTimer = 0;
