@@ -20,7 +20,8 @@ Environment::Environment()
 
 	//checkpoint
 	TileData& tileCheckpoint = mTilesData[(int) TilesType::CHECKPOINT];
-	tileCheckpoint.mColor = LIGHTGRAY;
+	//tileCheckpoint.mColor = LIGHTGRAY;
+	tileCheckpoint.mColor = { 230, 230, 230, 255 };
 	tileCheckpoint.mSpeedMultiplier = tileRoad.mSpeedMultiplier;
 
 
