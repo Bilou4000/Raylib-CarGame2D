@@ -17,6 +17,7 @@ struct TileData
 {
 	TilesType mTileType = TilesType::GRASS;
 	Color mColor = LIME;
+	Texture2D ImageTexture;
 	float mSpeedMultiplier = 0.5f;
 	bool mIsObstacle = false;
 };

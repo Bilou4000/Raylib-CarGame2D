@@ -3,19 +3,19 @@
 Environment::Environment()
 {
 	TileData& tileGrass = mTilesData[(int)TilesType::GRASS];
-	tileGrass.mColor = LIME;
+	tileGrass.mColor = WHITE;
 	tileGrass.mSpeedMultiplier = 0.5f;
 
 	TileData& tileRoad = mTilesData[(int) TilesType::ROAD];
-	tileRoad.mColor = DARKGRAY;
+	tileRoad.mColor = WHITE;
 	tileRoad.mSpeedMultiplier = 1.0f;
 
 	TileData& tileObstacle = mTilesData[(int) TilesType::OBSTACLE];
-	tileObstacle.mColor = DARKGREEN;
+	tileObstacle.mColor = { 220, 220, 220, 255 };
 	tileObstacle.mIsObstacle = true;
 
 	TileData& tileCheckpoint = mTilesData[(int) TilesType::CHECKPOINT];
-	tileCheckpoint.mColor = GRAY;
+	tileCheckpoint.mColor = LIGHTGRAY;
 	tileCheckpoint.mSpeedMultiplier = tileRoad.mSpeedMultiplier;
 
 	TileData& tileFinishLine = mTilesData[(int) TilesType::FINISHLINE];
@@ -71,6 +71,29 @@ void Environment::InitCheckpoints()
 	}
 }
 
+void Environment::Init()
+{
+	TileData& tileGrass = mTilesData[(int) TilesType::GRASS];
+	tileGrass.ImageTexture = LoadTexture("resources/land_grass04.png");
+
+	TileData& tileRoad = mTilesData[(int) TilesType::ROAD];
+	tileRoad.ImageTexture = LoadTexture("resources/road/road_asphalt22.png");
+
+	TileData& tileObstacle = mTilesData[(int) TilesType::OBSTACLE];
+	tileObstacle.ImageTexture = LoadTexture("resources/tree_small.png");
+
+	TileData& tileCheckpoint = mTilesData[(int) TilesType::CHECKPOINT];
+	tileCheckpoint.ImageTexture = LoadTexture("resources/road/road_asphalt22.png");
+
+	TileData& tileFinishLine = mTilesData[(int) TilesType::FINISHLINE];
+	tileFinishLine.ImageTexture = LoadTexture("resources/road/road_asphalt88.png");
+
+	for (Checkpoint& checkpoint : mAllCheckpoints)
+	{
+		checkpoint.mIsPassed = false;
+	}
+}
+
 void Environment::Draw()
 {
 	for (int y = 0; y < mTilesY; y++)
@@ -78,7 +101,24 @@ void Environment::Draw()
 		for (int x = 0; x < mTilesX; x++)
 		{
 			const TileData* theTile = GetTileDataAtPos(x, y);
-			DrawRectangle(x * mTileSize, y * mTileSize, mTileSize, mTileSize, theTile->mColor);
+			//DrawRectangle(x * mTileSize, y * mTileSize, mTileSize, mTileSize, theTile->mColor);
+			if (!theTile->mIsObstacle)
+			{
+				DrawTextureEx(theTile->ImageTexture, { x * mTileSize, y * mTileSize }, 0, 0.4f, theTile->mColor);
+			}
+		}
+	}
+
+	for (int y = 0; y < mTilesY; y++)
+	{
+		for (int x = 0; x < mTilesX; x++)
+		{
+			const TileData* theTile = GetTileDataAtPos(x, y);
+			//DrawRectangle(x * mTileSize, y * mTileSize, mTileSize, mTileSize, theTile->mColor);
+			if (theTile->mIsObstacle)
+			{
+				DrawTextureEx(theTile->ImageTexture, { x * mTileSize - 10.0f, y * mTileSize - 10.0f }, 0, 0.5f, theTile->mColor);
+			}
 		}
 	}
 
