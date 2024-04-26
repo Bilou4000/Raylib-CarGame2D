@@ -54,7 +54,21 @@ bool GameManager::StartRace()
 void GameManager::DrawStartRace()
 {
 	//Draw Countdown
-	DrawText(TextFormat("%i", mCountdown), GetScreenWidth() / 2 - (MeasureText(TextFormat("%i", mCountdown), 380) / 2), 180, 380, MAROON);
+
+	const char* text = TextFormat("%i", mCountdown);
+	float posX = GetScreenWidth() / 2 - (MeasureText(TextFormat("%i", mCountdown), 380) / 2);
+	float posY = 180;
+	float fontSize = 380;
+	float outlineSize = 5;
+
+	Color color = BLACK;
+	Color outlineColor = WHITE;
+
+	DrawText(text, posX - outlineSize, posY - outlineSize, fontSize, outlineColor);
+	DrawText(text, posX + outlineSize, posY - outlineSize, fontSize, outlineColor);
+	DrawText(text, posX - outlineSize, posY + outlineSize, fontSize, outlineColor);
+	DrawText(text, posX + outlineSize, posY + outlineSize, fontSize, outlineColor);
+	DrawText(text, posX, posY, fontSize, color);
 }
 
 float GameManager::GetTimer()
