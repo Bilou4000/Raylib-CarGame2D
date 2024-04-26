@@ -5,6 +5,8 @@
 #include <iostream>
 #include <cmath>
 
+bool isInObstacle = false;
+
 Car::Car( Environment& environment )
 	: mEnvironment( environment )
 {
@@ -12,11 +14,14 @@ Car::Car( Environment& environment )
 
 void Car::Init()
 {
+	//Load Car Texture
 	mCarTexture = LoadTexture("resources/car_blue_small_5.png");
-	mRound = 1;
 
+	//Initialize all variable 
+	isInObstacle = false;
 	mX = 860;
 	mY = 600;
+	mRound = 1;
 	mSpeed = 0;
 	mAngle = 0;
 }
@@ -43,12 +48,12 @@ bool Car::Update(float deltaTime)
 	mSpeed = Lerp(mSpeed, targetSpeed, deltaTime * accelerationSpeed);
 
 	//Turn
-	if (IsKeyDown(KEY_D))
+	if (IsKeyDown(KEY_D) && !isInObstacle)
 	{
 		mAngle += mSpeed / mMaxSpeed * mVelocity * DEG2RAD * deltaTime;
 	}
 
-	if (IsKeyDown(KEY_A))
+	if (IsKeyDown(KEY_A) && !isInObstacle)
 	{
 		mAngle -= mSpeed / mMaxSpeed * mVelocity * DEG2RAD * deltaTime;
 	}
@@ -103,8 +108,11 @@ bool Car::Update(float deltaTime)
 							y = mY;
 							mSpeed = 0;
 							hasCollided = true;
+							isInObstacle = true;
 							break;
 						}
+
+						isInObstacle = false;
 					}
 					//check if tile is an obstacle or a finish line
 					else if (tiledata->mTileType == TilesType::CHECKPOINT || tiledata->mTileType == TilesType::FINISHLINE)
